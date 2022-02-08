@@ -2,6 +2,7 @@ module.exports = {
   purge: {
     // Specify the paths to all of the template files in your project
     content: [
+      './pages/**/*.{js,ts,jsx,tsx}',
       './src/components/**/*.res',
       './src/layouts/**/*.res',
       './src/*.res',

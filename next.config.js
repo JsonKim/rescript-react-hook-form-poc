@@ -7,7 +7,7 @@ const withTM = require("next-transpile-modules")(transpileModules);
 const isWebpack5 = true;
 const config = {
   target: "serverless",
-  pageExtensions: ["jsx", "js"],
+  pageExtensions: ["jsx", "js", "tsx", "ts"],
   env: {
     ENV: process.env.NODE_ENV,
   },
