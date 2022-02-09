@@ -23,15 +23,23 @@ module FormTest = {
     category: 'a,
     aboutYou: 'a
   }
+
+  type path = 
+  | NameFirst
+  | Category
+  | AboutYou
+
+  let pathToString = (path) => switch path {
+  | NameFirst => "name.first"
+  | Category => "category"
+  | AboutYou => "aboutYou"
+  }
 }
 
 let default = () => {
   module Form = ReactHookForm.Form(FormTest)
 
-  let {handleSubmit, register, formState: { errors } } = Form.use(.
-    ~config=Form.config(~mode=#onSubmit, ()),
-    (),
-  )
+  let {handleSubmit, register, formState: { errors } } = Form.use(Form.config(~mode=#onSubmit, ()))
 
   let onSubmit = (data: FormTest.t, _event) => {
     data.name.first->Js.log
@@ -39,9 +47,9 @@ let default = () => {
 
   errors->Js.log
 
-  let firstName = register(. "name.first")
-  let category = register(. "category")
-  let aboutYou = register(. "aboutYou")
+  let firstName = register(. NameFirst)
+  let category = register(. Category)
+  let aboutYou = register(. AboutYou)
 
   <div>
     <form onSubmit={handleSubmit(. onSubmit)}>

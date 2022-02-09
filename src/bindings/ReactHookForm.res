@@ -1,3 +1,9 @@
+%%raw(`
+  function modifyRecord(origin, name, value){
+    return { ...origin, [name]: value }
+  }
+`)
+
 module Error = {
   type t = {message: string, @as("type") type_: string}
 
@@ -17,6 +23,8 @@ module Register = {
 module type FieldValues = {
   type t
   type formState<'a>
+  type path
+  let pathToString: (path) => string
 }
 
 module Form = (FieldValues: FieldValues) => {
@@ -69,7 +77,31 @@ module Form = (FieldValues: FieldValues) => {
   }
 
   @module("react-hook-form")
-  external use: (. ~config: config=?, unit) => t = "useForm"
+  external useInternal: (. ~config: config=?, unit) => t = "useForm"
+
+  type t2 = {
+    clearErrors: (. string) => unit,
+    // control: Control.t,
+    formState: formState,
+    getValues: (. array<string>) => Js.Json.t,
+    handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
+    reset: (. option<Js.Json.t>) => unit,
+    setError: (. string, Error.t) => unit,
+    setFocus: (. string) => unit,
+    setValue: (. string, Js.Json.t) => unit,
+    register: (. FieldValues.path) => Register.t,
+  }
+  @val external modifyRecord: ('a, string, 'b) => t2 = "modifyRecord";
+
+  let use = (config) => {
+    let r = useInternal(. ~config, ())
+
+    let register = (. path: FieldValues.path) => {
+      r.register(. path->FieldValues.pathToString)
+    }
+
+    modifyRecord(r, "register", register)
+  }
 
   @send
   external setErrorAndFocus: (t, string, Error.t, @as(json`{shouldFocus: true }`) _) => unit =
