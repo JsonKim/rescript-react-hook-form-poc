@@ -13,6 +13,16 @@ module FormTest = {
     category: string,
     aboutYou: string
   }
+
+  type nameState<'a> = {
+    first: 'a
+  }
+
+  type formState<'a> = {
+    name: nameState<'a>,
+    category: 'a,
+    aboutYou: 'a
+  }
 }
 
 let default = () => {

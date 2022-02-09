@@ -16,16 +16,17 @@ module Register = {
 
 module type FieldValues = {
   type t
+  type formState<'a>
 }
 
 module Form = (FieldValues: FieldValues) => {
   type onSubmit = ReactEvent.Form.t => unit
 
   type formState = {
-    errors: Js.Dict.t<Error.t>,
+    errors: FieldValues.formState<option<Error.t>>,
     isDirty: bool,
-    dirtyFields: Js.Dict.t<bool>,
-    touchedFields: Js.Dict.t<bool>,
+    dirtyFields: FieldValues.formState<bool>,
+    touchedFields: FieldValues.formState<bool>,
     isSubmitted: bool,
     isSubmitting: bool,
     isSubmitSuccessful: bool,
