@@ -22,19 +22,19 @@ module Register = {
 
 module type FieldValues = {
   type t
-  type formState<'a>
-  type path
-  let pathToString: (path) => string
+  type t_toGeneric<'a>
+  type t_keyOf
+  let t_keyToString: t_keyOf => string
 }
 
 module Form = (FieldValues: FieldValues) => {
   type onSubmit = ReactEvent.Form.t => unit
 
   type formState = {
-    errors: FieldValues.formState<option<Error.t>>,
+    errors: FieldValues.t_toGeneric<option<Error.t>>,
     isDirty: bool,
-    dirtyFields: FieldValues.formState<bool>,
-    touchedFields: FieldValues.formState<bool>,
+    dirtyFields: FieldValues.t_toGeneric<bool>,
+    touchedFields: FieldValues.t_toGeneric<bool>,
     isSubmitted: bool,
     isSubmitting: bool,
     isSubmitSuccessful: bool,
@@ -64,40 +64,28 @@ module Form = (FieldValues: FieldValues) => {
   }
 
   type t = {
-    clearErrors: (. string) => unit,
+    clearErrors: (. FieldValues.t_keyOf) => unit,
     // control: Control.t,
     formState: formState,
-    getValues: (. array<string>) => Js.Json.t,
+    getValues: (. array<FieldValues.t_keyOf>) => Js.Json.t,
     handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
     reset: (. option<Js.Json.t>) => unit,
-    setError: (. string, Error.t) => unit,
-    setFocus: (. string) => unit,
-    setValue: (. string, Js.Json.t) => unit,
-    register: (. string) => Register.t,
+    setError: (. FieldValues.t_keyOf, Error.t) => unit,
+    setFocus: (. FieldValues.t_keyOf) => unit,
+    setValue: (. FieldValues.t_keyOf, Js.Json.t) => unit,
+    register: (. FieldValues.t_keyOf) => Register.t,
   }
 
   @module("react-hook-form")
   external useInternal: (. ~config: config=?, unit) => t = "useForm"
 
-  type t2 = {
-    clearErrors: (. string) => unit,
-    // control: Control.t,
-    formState: formState,
-    getValues: (. array<string>) => Js.Json.t,
-    handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
-    reset: (. option<Js.Json.t>) => unit,
-    setError: (. string, Error.t) => unit,
-    setFocus: (. string) => unit,
-    setValue: (. string, Js.Json.t) => unit,
-    register: (. FieldValues.path) => Register.t,
-  }
-  @val external modifyRecord: ('a, string, 'b) => t2 = "modifyRecord";
+  @val external modifyRecord: ('a, string, 'b) => t = "modifyRecord"
 
-  let use = (config) => {
+  let use = config => {
     let r = useInternal(. ~config, ())
 
-    let register = (. path: FieldValues.path) => {
-      r.register(. path->FieldValues.pathToString)
+    let register = (. path: FieldValues.t_keyOf) => {
+      r.register(. path)
     }
 
     modifyRecord(r, "register", register)

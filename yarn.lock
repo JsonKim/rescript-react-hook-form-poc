@@ -23,6 +23,11 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
+"@greenlabs/ppx-ts@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@greenlabs/ppx-ts/-/ppx-ts-0.1.2.tgz#76402802d5f2d5423dd567bad754cc3dedce4f9f"
+  integrity sha512-wPaMvWYAcv31IDghpV2NKsR46QLTuOHI9lCFO3YlPkU6bKNM9JO71kJby9W+mbfjnPD91O0TnjJ+P4x5rV/9mg==
+
 "@next/env@12.0.10":
   version "12.0.10"
   resolved "https://registry.yarnpkg.com/@next/env/-/env-12.0.10.tgz#561640fd62279218ccd2798ae907bae8d94a7730"
