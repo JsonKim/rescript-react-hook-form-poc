@@ -15,10 +15,10 @@ var P = {
   make: ReForms$P
 };
 
-function pathToString(path) {
-  switch (path) {
-    case /* NameFirst */0 :
-        return "name.first";
+function t_keyToString(key) {
+  switch (key) {
+    case /* Name */0 :
+        return "name";
     case /* Category */1 :
         return "category";
     case /* AboutYou */2 :
@@ -28,7 +28,7 @@ function pathToString(path) {
 }
 
 var FormTest = {
-  pathToString: pathToString
+  t_keyToString: t_keyToString
 };
 
 function $$default(param) {
@@ -38,11 +38,11 @@ function $$default(param) {
       });
   var register = match.register;
   var onSubmit = function (data, _event) {
-    console.log(data.name.first);
+    console.log(data.name);
     
   };
   console.log(match.formState.errors);
-  var firstName = register(/* NameFirst */0);
+  var firstName = register(/* Name */0);
   var category = register(/* Category */1);
   var aboutYou = register(/* AboutYou */2);
   return React.createElement("div", undefined, React.createElement("form", {
