@@ -4,73 +4,102 @@ module P = {
 }
 
 module FormTest = {
-  type name = {
-    first: string
-  }
-
   type t = {
-    name: name,
+    name: string,
     category: string,
-    aboutYou: string
+    aboutYou: bool,
+    age: int,
   }
 
-  type nameState<'a> = {
-    first: 'a
+  type inputs = {
+    name: option<string>,
+    category: option<string>,
+    aboutYou: option<bool>,
+    age: option<string>,
   }
 
-  type formState<'a> = {
-    name: nameState<'a>,
-    category: 'a,
-    aboutYou: 'a
+  type tOptional = {
+    name: option<string>,
+    category: option<string>,
+    aboutYou: option<bool>,
+    age: option<int>
   }
 
-  type path = 
-  | NameFirst
-  | Category
-  | AboutYou
+  type formState = %ppx_ts.toGeneric(t)
 
-  let pathToString = (path) => switch path {
-  | NameFirst => "name.first"
-  | Category => "category"
-  | AboutYou => "aboutYou"
-  }
+  type path = %ppx_ts.keyOf(t)
 }
 
 let default = () => {
   module Form = ReactHookForm.Form(FormTest)
 
-  let {handleSubmit, register, formState: { errors } } = Form.use(Form.config(~mode=#onSubmit, ()))
+  let {handleSubmit, register, formState: { errors }, watch } = Form.use(Form.config(~mode=#onSubmit, ()))
 
   let onSubmit = (data: FormTest.t, _event) => {
-    data.name.first->Js.log
+    Js.log2("onSubmit", data)
   }
 
-  errors->Js.log
+  let watchValues = watch(. [Name, AboutYou, Age])
+  Js.log2("watch", watchValues)
 
-  let firstName = register(. NameFirst)
+  Js.log2("errors", errors)
+
+  let firstName = register(. Name)
   let category = register(. Category)
   let aboutYou = register(. AboutYou)
+  let age = register(. Age)
 
   <div>
     <form onSubmit={handleSubmit(. onSubmit)}>
-      <input
-        onChange=firstName.onChange
-        onBlur=firstName.onBlur
-        ref=firstName.ref
-        name=firstName.name
-      />
-      <input
-        onChange=category.onChange
-        onBlur=category.onBlur
-        ref=category.ref
-        name=category.name
-      />
-      <input
-        onChange=aboutYou.onChange
-        onBlur=aboutYou.onBlur
-        ref=aboutYou.ref
-        name=aboutYou.name
-      />
+      <div>
+        {"firstName:"->React.string}
+      </div>
+      <div>
+        <input
+          className="border"
+          onChange=firstName.onChange
+          onBlur=firstName.onBlur
+          ref=firstName.ref
+          name=firstName.name
+        />
+      </div>
+      <div>
+        {"category:"->React.string}
+      </div>
+      <div>
+        <input
+          className="border"
+          onChange=category.onChange
+          onBlur=category.onBlur
+          ref=category.ref
+          name=category.name
+        />
+      </div>
+      <div>
+        {"aboutYou:"->React.string}
+      </div>
+      <div>
+        <input
+          type_="checkbox"
+          onChange=aboutYou.onChange
+          onBlur=aboutYou.onBlur
+          ref=aboutYou.ref
+          name=aboutYou.name
+        />
+      </div>
+      <div>
+        {"age:"->React.string}
+      </div>
+      <div>
+        <input
+          className="border"
+          onChange=age.onChange
+          onBlur=age.onBlur
+          ref=age.ref
+          name=age.name
+        />
+      </div>
+
       <input type_="submit" />
     </form>
   </div>

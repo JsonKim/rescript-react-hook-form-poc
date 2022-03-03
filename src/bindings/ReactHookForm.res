@@ -1,7 +1,19 @@
 %%raw(`
-  function modifyRecord(origin, name, value){
-    return { ...origin, [name]: value }
+function modifyRecord(origin, name, value){
+  return { ...origin, [name]: value }
+}
+`)
+
+%%raw(`
+function zipObj(keys, values) {
+  const length = Math.min(keys.length, values.length);
+  const ret = {};
+  for (let i = 0; i < length; i++) {
+    ret[keys[i]] = values[i];
   }
+
+  return ret;
+}
 `)
 
 module Control = {
@@ -26,9 +38,11 @@ module Register = {
 
 module type FieldValues = {
   type t
+  type inputs
+  type tOptional
   type formState<'a>
   type path
-  let pathToString: (path) => string
+  let path_keyToString: (path) => string
 }
 
 module Form = (FieldValues: FieldValues) => {
@@ -78,6 +92,7 @@ module Form = (FieldValues: FieldValues) => {
     setFocus: (. string) => unit,
     setValue: (. string, Js.Json.t) => unit,
     register: (. string) => Register.t,
+    watch: (. array<string>) => Js.Json.t,
   }
 
   @module("react-hook-form")
@@ -87,24 +102,36 @@ module Form = (FieldValues: FieldValues) => {
     clearErrors: (. string) => unit,
     control: Control.t,
     formState: formState,
-    getValues: (. array<string>) => Js.Json.t,
+    getValues: (. array<string>) => FieldValues.inputs,
     handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
     reset: (. option<Js.Json.t>) => unit,
     setError: (. string, Error.t) => unit,
     setFocus: (. string) => unit,
     setValue: (. string, Js.Json.t) => unit,
     register: (. FieldValues.path) => Register.t,
+    watch: (. array<FieldValues.path>) => FieldValues.inputs,
   }
+
   @val external modifyRecord: ('a, string, 'b) => t2 = "modifyRecord";
+  @val external zipObj: ('a, 'b) => FieldValues.inputs = "zipObj";
 
   let use = (config) => {
     let r = useInternal(. ~config, ())
 
     let register = (. path: FieldValues.path) => {
-      r.register(. path->FieldValues.pathToString)
+      r.register(. path->FieldValues.path_keyToString)
     }
 
-    modifyRecord(r, "register", register)
+    let modify = (f) => (. names: array<FieldValues.path>) => {
+      let keys = names->Belt.Array.map(FieldValues.path_keyToString)
+      let values = f(. keys)
+      zipObj(keys, values)
+    }
+
+    r
+    ->modifyRecord("register", register)
+    ->modifyRecord("getValues", modify(r.getValues))
+    ->modifyRecord("watch", modify(r.watch))
   }
 
   @send

@@ -15,20 +15,22 @@ var P = {
   make: ReForms$P
 };
 
-function pathToString(path) {
-  switch (path) {
-    case /* NameFirst */0 :
-        return "name.first";
+function path_keyToString(key) {
+  switch (key) {
+    case /* Name */0 :
+        return "name";
     case /* Category */1 :
         return "category";
     case /* AboutYou */2 :
         return "aboutYou";
+    case /* Age */3 :
+        return "age";
     
   }
 }
 
 var FormTest = {
-  pathToString: pathToString
+  path_keyToString: path_keyToString
 };
 
 function $$default(param) {
@@ -38,31 +40,47 @@ function $$default(param) {
       });
   var register = match.register;
   var onSubmit = function (data, _event) {
-    console.log(data.name.first);
+    console.log("onSubmit", data);
     
   };
-  console.log(match.formState.errors);
-  var firstName = register(/* NameFirst */0);
+  var watchValues = match.watch([
+        /* Name */0,
+        /* AboutYou */2,
+        /* Age */3
+      ]);
+  console.log("watch", watchValues);
+  console.log("errors", match.formState.errors);
+  var firstName = register(/* Name */0);
   var category = register(/* Category */1);
   var aboutYou = register(/* AboutYou */2);
+  var age = register(/* Age */3);
   return React.createElement("div", undefined, React.createElement("form", {
                   onSubmit: match.handleSubmit(onSubmit)
-                }, React.createElement("input", {
-                      ref: firstName.ref,
-                      name: firstName.name,
-                      onBlur: firstName.onBlur,
-                      onChange: firstName.onChange
-                    }), React.createElement("input", {
-                      ref: category.ref,
-                      name: category.name,
-                      onBlur: category.onBlur,
-                      onChange: category.onChange
-                    }), React.createElement("input", {
-                      ref: aboutYou.ref,
-                      name: aboutYou.name,
-                      onBlur: aboutYou.onBlur,
-                      onChange: aboutYou.onChange
-                    }), React.createElement("input", {
+                }, React.createElement("div", undefined, "firstName:"), React.createElement("div", undefined, React.createElement("input", {
+                          ref: firstName.ref,
+                          className: "border",
+                          name: firstName.name,
+                          onBlur: firstName.onBlur,
+                          onChange: firstName.onChange
+                        })), React.createElement("div", undefined, "category:"), React.createElement("div", undefined, React.createElement("input", {
+                          ref: category.ref,
+                          className: "border",
+                          name: category.name,
+                          onBlur: category.onBlur,
+                          onChange: category.onChange
+                        })), React.createElement("div", undefined, "aboutYou:"), React.createElement("div", undefined, React.createElement("input", {
+                          ref: aboutYou.ref,
+                          name: aboutYou.name,
+                          type: "checkbox",
+                          onBlur: aboutYou.onBlur,
+                          onChange: aboutYou.onChange
+                        })), React.createElement("div", undefined, "age:"), React.createElement("div", undefined, React.createElement("input", {
+                          ref: age.ref,
+                          className: "border",
+                          name: age.name,
+                          onBlur: age.onBlur,
+                          onChange: age.onChange
+                        })), React.createElement("input", {
                       type: "submit"
                     })));
 }
