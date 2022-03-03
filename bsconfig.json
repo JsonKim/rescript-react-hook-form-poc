@@ -4,7 +4,9 @@
   "reason": { "react-jsx": 3 },
   "refmt": 3,
   "bs-dependencies": ["@rescript/react"],
-  "ppx-flags": [],
+  "ppx-flags": [
+    "@greenlabs/ppx-ts/ppx"
+  ],
   "sources": [
     { "dir": "src", "subdirs": true }
   ],
