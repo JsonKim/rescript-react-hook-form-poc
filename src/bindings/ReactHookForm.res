@@ -4,6 +4,10 @@
   }
 `)
 
+module Control = {
+  type t
+}
+
 module Error = {
   type t = {message: string, @as("type") type_: string}
 
@@ -65,7 +69,7 @@ module Form = (FieldValues: FieldValues) => {
 
   type t = {
     clearErrors: (. string) => unit,
-    // control: Control.t,
+    control: Control.t,
     formState: formState,
     getValues: (. array<string>) => Js.Json.t,
     handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
@@ -81,7 +85,7 @@ module Form = (FieldValues: FieldValues) => {
 
   type t2 = {
     clearErrors: (. string) => unit,
-    // control: Control.t,
+    control: Control.t,
     formState: formState,
     getValues: (. array<string>) => Js.Json.t,
     handleSubmit: (. (@uncurry FieldValues.t, ReactEvent.Form.t) => unit) => onSubmit,
@@ -125,8 +129,8 @@ module WatchValues = {
   @deriving({abstract: light})
   type config<'a> = {
     name: 'a,
-    // @optional
-    // control: Control.t,
+    @optional
+    control: Control.t,
     @optional
     defaultValue: Js.Json.t,
   }
